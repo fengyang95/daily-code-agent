@@ -79,7 +79,7 @@ def filter_by_key_words(data:List[Dict],key_words:List[str])->List[Dict]:
 
     new_data=[]
     for item in data:
-        if valid_text(item['summary') is True:
+        if valid_text(item['summary']) is True:
             new_data.append(item)
     return new_data 
         
@@ -140,6 +140,7 @@ def main():
     with open(args.data, "r") as f:
         for line in f:
             data.append(json.loads(line))
+
     key_words=[word.lower() for word in key_words.split(',')]
     data=filter_by_key_words(data,key_words)
     # 去重
@@ -158,7 +159,6 @@ def main():
         data,
         model_name,
         language,
-        key_words,
         args.max_workers
     )
     
