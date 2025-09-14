@@ -65,6 +65,26 @@ def process_single_item(chain, item: Dict, language: str) -> Dict:
         }
     return item
 
+def filter_by_key_words(data:List[Dict],key_words:List[str])->List[Dict]:
+    def split_by_special_chars(text):
+        result= re.split(r'[, -]+', text)
+        return [item for item in result if item]
+
+    def valid_text(text)->bool:
+        words=split_by_special_chars(text.lower())
+        if len(set(words).intersection(set(key_words)))>0:
+            return True 
+        else:
+            return False 
+
+    new_data=[]
+    for item in data:
+        if valid_text(item['summary') is True:
+            new_data.append(item)
+    return new_data 
+        
+         
+    
 def process_all_items(data: List[Dict], model_name: str, language: str, max_workers: int) -> List[Dict]:
     """并行处理所有数据项"""
     llm = ChatOpenAI(model=model_name).with_structured_output(Structure, method="function_calling")
@@ -107,6 +127,7 @@ def main():
     args = parse_args()
     model_name = os.environ.get("MODEL_NAME", 'deepseek-chat')
     language = os.environ.get("LANGUAGE", 'Chinese')
+    key_words=os.environ.get("KEY_WORDS",'RL,Agentic,Agent,Code,LLM,SWE')
 
     # 检查并删除目标文件
     target_file = args.data.replace('.jsonl', f'_AI_enhanced_{language}.jsonl')
@@ -119,7 +140,8 @@ def main():
     with open(args.data, "r") as f:
         for line in f:
             data.append(json.loads(line))
-
+    key_words=[word.lower() for word in key_words.split(',')]
+    data=filter_by_key_words(data,key_words)
     # 去重
     seen_ids = set()
     unique_data = []
@@ -136,6 +158,7 @@ def main():
         data,
         model_name,
         language,
+        key_words,
         args.max_workers
     )
     
