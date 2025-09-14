@@ -68,7 +68,7 @@ def process_single_item(chain, item: Dict, language: str) -> Dict:
 
 def filter_by_key_words(data:List[Dict],key_words:List[str])->List[Dict]:
     def split_by_special_chars(text):
-        result= re.split(r'[, -]+', text)
+        result= re.split(r'[, -().]+', text)
         return [item for item in result if item]
 
     def valid_text(text)->bool:
