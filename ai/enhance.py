@@ -62,7 +62,8 @@ def process_single_item(chain, item: Dict, language: str) -> Dict:
             "motivation": "Error",
             "method": "Error",
             "result": "Error",
-            "conclusion": "Error"
+            "conclusion": "Error",
+            "topics":"Error"
         }
     return item
 
@@ -166,6 +167,8 @@ def main():
     # 保存结果
     with open(target_file, "w") as f:
         for item in processed_data:
+            if "other topic" in item['topics']:
+                continue
             f.write(json.dumps(item) + "\n")
 
 if __name__ == "__main__":
