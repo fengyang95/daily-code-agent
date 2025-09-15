@@ -9,5 +9,5 @@ class Structure(BaseModel):
     result: str = Field(description="result of this paper")
     conclusion: str = Field(description="conclusion of this paper")
 
-    topics: str = Field(description="topics of this paper. Can only include one or more of the following candidates: "
-                                    "[code agent,agent analysis,agentic reinforcement learning,llm LLM,llm,swe application,swe benchmark,other topic]")
+    topic: str = Field(description="topic of this paper. Can only include one of the following candidates: "
+                                    "[code agent,agent analysis,agentic reinforcement learning,swe application,swe benchmark,other topic]")
