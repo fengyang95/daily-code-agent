@@ -167,7 +167,7 @@ def main():
     # 保存结果
     with open(target_file, "w") as f:
         for item in processed_data:
-            if "other topic" in item['AI']['topics']:
+            if "other topic" in item['AI']['topic']:
                 continue
             f.write(json.dumps(item) + "\n")
 
