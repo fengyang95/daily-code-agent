@@ -28,7 +28,7 @@ class WeChatFetcher:
         self.request_timeout = self.config.get('request_timeout', 30)  # Request timeout in seconds
 
         # Search parameters
-        self.keywords = self.config.get('keywords', ['强化学习'])#['强化学习', 'Code Agent', 'Agentic', '大模型'])
+        self.keywords = self.config.get('keywords', ['强化学习', 'Code Agent', 'Agentic', '大模型'])
         self.search_type = '_2'  # Search articles only
         self.sort_type = '_2'  # Sort by latest
 
@@ -423,9 +423,9 @@ def main():
     articles = fetcher.fetch_articles()
 
     # Output as JSONL
-    # today = datetime.now().strftime("%Y-%m-%d")
-    start_date = datetime.fromtimestamp(datetime.now().timestamp() - 1 * 24 * 3600).strftime("%Y-%m-%d")
-    output_file = f"data/{start_date}_wechat.jsonl"
+    today = datetime.now().strftime("%Y-%m-%d")
+    # start_date = datetime.fromtimestamp(datetime.now().timestamp() - 1 * 24 * 3600).strftime("%Y-%m-%d")
+    output_file = f"data/{today}_wechat.jsonl"
 
     os.makedirs("data", exist_ok=True)
     with open(output_file, 'w', encoding='utf-8') as f:
