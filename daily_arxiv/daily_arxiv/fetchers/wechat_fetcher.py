@@ -914,7 +914,7 @@ def main():
     # start_date = datetime.fromtimestamp(datetime.now().timestamp() - 1 * 24 * 3600).strftime("%Y-%m-%d")
     # 获取当前文件的绝对路径
 
-    output_file = os.path.join(grandgrandparent_dir, "data/{today}_wechat.jsonl")
+    output_file = os.path.join(grandgrandparent_dir, f"data/{today}_wechat.jsonl")
 
     os.makedirs("data", exist_ok=True)
     with open(output_file, 'w', encoding='utf-8') as f:
