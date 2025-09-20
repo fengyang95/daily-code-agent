@@ -20,7 +20,7 @@ jobs:
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv sync
-      
+
     - name: Fetch WeChat articles (optional)
       id: wechat_step
       continue-on-error: true
@@ -55,7 +55,7 @@ jobs:
             echo "⚠️ WeChat文章获取失败或没有新文章 / WeChat fetching failed or no new articles"
             echo "wechat_fetched=false" >> $GITHUB_OUTPUT
         fi
-        
+
     - name: Crawl arXiv papers
       id: crawl_step
       run: |
@@ -104,9 +104,8 @@ jobs:
         cp "data/${today}.jsonl" "data/${today}_arxiv_only.jsonl"
         
         # 合并数据 / Merge data
-        cd daily_arxiv
-        python daily_arxiv/data_merger.py $today
-        cd ..
+      
+        python daily_arxiv/daily_arxiv/data_merger.py $today
         
         echo "数据合并完成 / Data merging completed"
         
