@@ -67,6 +67,35 @@ def process_single_item(chain, item: Dict, language: str) -> Dict:
         }
     return item
 
+def create_wechat_ai_fields(item: Dict) -> Dict:
+    """为WeChat文章创建兼容的AI字段结构"""
+    summary = item.get('summary', '')
+    
+    # 将WeChat文章内容映射到AI字段结构
+    ai_fields = {
+        "tldr": summary[:200] + "..." if len(summary) > 200 else summary,
+        "motivation": "微信公众号文章，分享AI相关技术内容",
+        "method": "基于实际应用经验的技术分享",
+        "result": "提供实用的AI技术见解和案例分析",
+        "conclusion": "适合了解AI技术在实际场景中的应用",
+        "topic": "other topic"  # WeChat文章默认归类为其他主题
+    }
+    
+    # 根据内容关键词调整topic
+    content_lower = (item.get('title', '') + ' ' + summary).lower()
+    if any(keyword in content_lower for keyword in ['代码', 'code', '编程']):
+        ai_fields["topic"] = "code agent"
+    elif any(keyword in content_lower for keyword in ['智能体', 'agent', '代理']):
+        ai_fields["topic"] = "agent analysis"
+    elif any(keyword in content_lower for keyword in ['强化学习', 'rl', 'reinforcement']):
+        ai_fields["topic"] = "agentic reinforcement learning"
+    elif any(keyword in content_lower for keyword in ['软件工程', 'swe', '开发']):
+        ai_fields["topic"] = "swe application"
+    elif any(keyword in content_lower for keyword in ['基准', 'benchmark', '评测']):
+        ai_fields["topic"] = "swe benchmark"
+    
+    return ai_fields
+
 def filter_by_key_words(data:List[Dict],key_words:List[str])->List[Dict]:
     def split_by_special_chars(text):
         result= re.split(r'[, -().]+', text)
@@ -143,31 +172,61 @@ def main():
         for line in f:
             data.append(json.loads(line))
 
-    key_words=[word.lower() for word in key_words.split(',')]
-    data=filter_by_key_words(data,key_words)
-    # 去重
-    seen_ids = set()
-    unique_data = []
+    # 过滤WeChat文章 - WeChat文章已经是中文内容，不需要AI总结
+    arxiv_data = []
+    wechat_data = []
     for item in data:
+        # 检查是否为WeChat文章（通过ID前缀或categories字段）
+        if item.get('id', '').startswith('wechat.') or 'wechat.article' in item.get('categories', []):
+            wechat_data.append(item)
+        else:
+            arxiv_data.append(item)
+    
+    print(f'Found {len(wechat_data)} WeChat articles (skipping AI enhancement)', file=sys.stderr)
+    print(f'Found {len(arxiv_data)} arXiv articles (will process with AI)', file=sys.stderr)
+
+    # 只对arXiv文章进行关键词过滤和AI增强
+    key_words=[word.lower() for word in key_words.split(',')]
+    arxiv_data=filter_by_key_words(arxiv_data,key_words)
+    # 去重 - 只对arXiv文章去重
+    seen_ids = set()
+    unique_arxiv_data = []
+    for item in arxiv_data:
         if item['id'] not in seen_ids:
             seen_ids.add(item['id'])
-            unique_data.append(item)
+            unique_arxiv_data.append(item)
 
-    data = unique_data
     print('Open:', args.data, file=sys.stderr)
+    print(f'Processing {len(unique_arxiv_data)} unique arXiv articles with AI', file=sys.stderr)
     
-    # 并行处理所有数据
-    processed_data = process_all_items(
-        data,
-        model_name,
-        language,
-        args.max_workers
-    )
+    # 只对arXiv文章进行AI增强处理
+    if unique_arxiv_data:
+        processed_arxiv_data = process_all_items(
+            unique_arxiv_data,
+            model_name,
+            language,
+            args.max_workers
+        )
+    else:
+        processed_arxiv_data = []
     
-    # 保存结果
+    # 为WeChat文章创建AI字段，使其与arXiv文章格式兼容
+    wechat_data_with_ai = []
+    for item in wechat_data:
+        item_copy = item.copy()
+        item_copy['AI'] = create_wechat_ai_fields(item)
+        wechat_data_with_ai.append(item_copy)
+    
+    # 合并处理后的arXiv文章和带AI字段的WeChat文章
+    all_processed_data = processed_arxiv_data + wechat_data_with_ai
+    
+    print(f'Merged {len(processed_arxiv_data)} AI-enhanced arXiv articles with {len(wechat_data_with_ai)} WeChat articles (with AI fields)', file=sys.stderr)
+    
+    # 保存结果 - 现在所有文章都有AI字段，可以统一处理
     with open(target_file, "w") as f:
-        for item in processed_data:
-            if "other topic" in item['AI']['topic']:
+        for item in all_processed_data:
+            # 检查AI字段中的topic，过滤掉'other topic'的文章（包括WeChat文章）
+            if 'AI' in item and "other topic" in item['AI']['topic']:
                 continue
             f.write(json.dumps(item) + "\n")
 

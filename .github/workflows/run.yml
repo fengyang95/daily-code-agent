@@ -57,6 +57,58 @@ jobs:
         echo "crawl_date=$today" >> $GITHUB_OUTPUT
         echo "爬取完成 / Crawling completed"
         
+    - name: Fetch WeChat articles (optional)
+      id: wechat_step
+      continue-on-error: true
+      run: |
+        source .venv/bin/activate
+        today=$(date -u "+%Y-%m-%d")
+        echo "开始获取 $today 的WeChat文章... / Starting to fetch $today WeChat articles..."
+        
+        # 检查是否配置了WeChat API Token / Check if WeChat API token is configured
+        if [ -z "${{ secrets.WECHAT_API_TOKEN }}" ]; then
+            echo "未配置WeChat API Token，跳过... / No WeChat API token configured, skipping..."
+            echo "wechat_fetched=false" >> $GITHUB_OUTPUT
+            exit 0
+        fi
+        
+        # 获取WeChat文章 / Fetch WeChat articles
+        export WECHAT_API_TOKEN="${{ secrets.WECHAT_API_TOKEN }}"
+        export WECHAT_API_BASE_URL="${{ vars.WECHAT_API_BASE_URL }}"
+        export WECHAT_KEYWORDS="${{ vars.WECHAT_KEYWORDS }}"
+        
+        # 使用独立脚本获取WeChat数据 / Use standalone script to fetch WeChat data
+        cd daily_arxiv
+        python daily_arxiv/fetchers/wechat_fetcher.py
+        cd ..
+        
+        # 检查是否成功获取 / Check if fetching was successful
+        wechat_file="data/${today}_wechat.jsonl"
+        if [ -f "$wechat_file" ]; then
+            echo "✅ WeChat文章获取成功: $wechat_file / WeChat articles fetched successfully"
+            echo "wechat_fetched=true" >> $GITHUB_OUTPUT
+        else
+            echo "⚠️ WeChat文章获取失败或没有新文章 / WeChat fetching failed or no new articles"
+            echo "wechat_fetched=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Merge data sources
+      if: steps.wechat_step.outputs.wechat_fetched == 'true'
+      run: |
+        source .venv/bin/activate
+        today=${{ steps.crawl_step.outputs.crawl_date }}
+        echo "合并数据源... / Merging data sources..."
+        
+        # 备份原始arXiv数据 / Backup original arXiv data
+        cp "data/${today}.jsonl" "data/${today}_arxiv_only.jsonl"
+        
+        # 合并数据 / Merge data
+        cd daily_arxiv
+        python daily_arxiv/data_merger.py $today
+        cd ..
+        
+        echo "数据合并完成 / Data merging completed"
+        
     - name: Check for duplicates
       id: dedup_check
       run: |
