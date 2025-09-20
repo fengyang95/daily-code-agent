@@ -8,8 +8,6 @@ import os
 import sys
 from datetime import datetime
 from typing import List, Dict, Any
-from .fetchers.wechat_fetcher import WeChatFetcher
-
 
 class DataMerger:
     """Merges data from multiple sources while maintaining format consistency"""
