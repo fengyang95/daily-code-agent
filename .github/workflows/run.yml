@@ -42,9 +42,9 @@ jobs:
         export TLDR_SENDER_FILTER="${{ vars.TLDR_SENDER_FILTER }}"
 
         # 使用独立脚本获取tldr数据 / Use standalone script to fetch TLDR data
-        cd daily_arxiv
-        python daily_arxiv/fetchers/tldr_tech_fetcher_enhanced.py
-        cd ..
+        
+        python daily_arxiv/daily_arxiv/fetchers/tldr_tech_fetcher_enhanced.py
+  
 
         # 检查是否成功获取 / Check if fetching was successful
         tldr_file="data/${today}_tldr.jsonl"
@@ -78,9 +78,9 @@ jobs:
         export WECHAT_KEYWORDS="${{ vars.WECHAT_KEYWORDS }}"
 
         # 使用独立脚本获取WeChat数据 / Use standalone script to fetch WeChat data
-        cd daily_arxiv
-        python daily_arxiv/fetchers/wechat_fetcher.py
-        cd ..
+      
+        python daily_arxiv/daily_arxiv/fetchers/wechat_fetcher.py
+
 
         # 检查是否成功获取 / Check if fetching was successful
         wechat_file="data/${today}_wechat.jsonl"
