@@ -30,7 +30,7 @@ class WeChatFetcher:
         self.request_timeout = self.config.get('request_timeout', 30)  # Request timeout in seconds
 
         # Search parameters
-        self.keywords = self.config.get('keywords', ['强化学习', 'Code Agent', 'Agentic', '大模型'])
+        self.keywords = self.config.get('keywords', ['强化学习', 'Agent', 'Agentic', '大模型'])
         self.search_type = '_2'  # Search articles only
         self.sort_type = '_2'  # Sort by latest
 
