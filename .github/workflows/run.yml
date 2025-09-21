@@ -21,6 +21,42 @@ jobs:
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv sync
 
+    - name: Fetch TLDR articles (optional)
+      id: tldr_step
+      continue-on-error: true
+      run: |
+        source .venv/bin/activate
+        today=$(date -u "+%Y-%m-%d")
+        echo "开始获取 $today 的TLDR文章... / Starting to fetch $today TLDR articles..."
+
+        # 检查是否配置了WeChat API Token / Check if WeChat API token is configured
+        if [ -z "${{ secrets.EMAIL_163_PASSWORD }}" ]; then
+            echo "未配置EMAIL 163 API Token，跳过... / No EMAIL 163 API token configured, skipping..."
+            echo "tldr_fetched=false" >> $GITHUB_OUTPUT
+            exit 0
+        fi
+
+        # 获取TLDR文章 / Fetch TLDR articles
+        export EMAIL_163_PASSWORD="${{ secrets.EMAIL_163_PASSWORD }}"
+        export EMAIL_163_ADDRESS="${{ vars.EMAIL_163_ADDRESS }}"
+        export TLDR_SENDER_FILTER="${{ vars.TLDR_SENDER_FILTER }}"
+
+        # 使用独立脚本获取tldr数据 / Use standalone script to fetch TLDR data
+        cd daily_arxiv
+        python daily_arxiv/fetchers/tldr_tech_fetcher_enhanced.py
+        cd ..
+
+        # 检查是否成功获取 / Check if fetching was successful
+        tldr_file="data/${today}_tldr.jsonl"
+        if [ -f "$wechat_file" ]; then
+            echo "✅ TLDR文章获取成功: $tldr_file / TLDR articles fetched successfully"
+            echo "tldr_fetched=true" >> $GITHUB_OUTPUT
+        else
+            echo "⚠️ TLDR文章获取失败或没有新文章 / TLDR fetching failed or no new articles"
+            echo "tldr_fetched=false" >> $GITHUB_OUTPUT
+        fi
+        
+
     - name: Fetch WeChat articles (optional)
       id: wechat_step
       continue-on-error: true
