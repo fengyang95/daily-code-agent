@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', checkScreenSize);
 
   initEventListeners();
-  fetchGitHubStats();
+//  fetchGitHubStats();
   
   fetchAvailableDates().then(() => {
     if (availableDates.length > 0) {
@@ -36,22 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-async function fetchGitHubStats() {
-  try {
-    const response = await fetch('https://api.github.com/repos/dw-dengwei/daily-arXiv-ai-enhanced');
-    const data = await response.json();
-    const starCount = data.stargazers_count;
-    const forkCount = data.forks_count;
-    
-    document.getElementById('starCount').textContent = starCount;
-    document.getElementById('forkCount').textContent = forkCount;
-  } catch (error) {
-    console.error('获取GitHub统计数据失败:', error);
-    document.getElementById('starCount').textContent = '?';
-    document.getElementById('forkCount').textContent = '?';
-  }
-}
+//
+//async function fetchGitHubStats() {
+//  try {
+////    const response = await fetch('https://api.github.com/repos/dw-dengwei/daily-arXiv-ai-enhanced');
+//    const data = await response.json();
+//    const starCount = data.stargazers_count;
+//    const forkCount = data.forks_count;
+//
+//    document.getElementById('starCount').textContent = starCount;
+//    document.getElementById('forkCount').textContent = forkCount;
+//  } catch (error) {
+//    console.error('获取GitHub统计数据失败:', error);
+//    document.getElementById('starCount').textContent = '?';
+//    document.getElementById('forkCount').textContent = '?';
+//  }
+//}
 
 function toggleDatePicker() {
   const datePicker = document.getElementById('datePickerModal');
