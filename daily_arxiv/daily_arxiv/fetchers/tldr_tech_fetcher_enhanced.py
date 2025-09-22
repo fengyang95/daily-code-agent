@@ -599,13 +599,8 @@ def main():
     """Main function"""
     # Configuration
     config = {
-        'sender_filter': [
-            'liyuanpeng.meta@bytedance.com',
-            'newsletter@tldr.tech',
-            # 'daily@techmeme.com'
-        ],
         'search_days': 7,
-        'max_articles': 100
+        'max_articles': 500
     }
 
     fetcher = TLDRTechFetcher(config)
