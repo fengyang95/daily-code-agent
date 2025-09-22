@@ -48,7 +48,7 @@ jobs:
 
         # 检查是否成功获取 / Check if fetching was successful
         tldr_file="data/${today}_tldr.jsonl"
-        if [ -f "$wechat_file" ]; then
+        if [ -f "$tldr_file" ]; then
             echo "✅ TLDR文章获取成功: $tldr_file / TLDR articles fetched successfully"
             echo "tldr_fetched=true" >> $GITHUB_OUTPUT
         else
