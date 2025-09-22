@@ -226,7 +226,7 @@ def main():
     with open(target_file, "w") as f:
         for item in all_processed_data:
             # 检查AI字段中的topic，过滤掉'other topic'的文章（包括WeChat文章）
-            if 'AI' in item and "other topic" in item['AI']['topic']:
+            if 'AI' in item and "topic" in item['AI'] and "other topic" in item['AI']['topic']:
                 continue
             f.write(json.dumps(item) + "\n")
 
