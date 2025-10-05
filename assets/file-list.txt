@@ -398,4 +398,9 @@
 2025-10-04_arxiv_only.jsonl
 2025-10-04_tldr.jsonl
 2025-10-04_wechat.jsonl
+2025-10-05.jsonl
+2025-10-05_AI_enhanced_Chinese.jsonl
+2025-10-05_arxiv_only.jsonl
+2025-10-05_tldr.jsonl
+2025-10-05_wechat.jsonl
 {today}_wechat.jsonl
