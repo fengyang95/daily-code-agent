@@ -773,4 +773,9 @@
 2025-12-18_arxiv_only.jsonl
 2025-12-18_tldr.jsonl
 2025-12-18_wechat.jsonl
+2025-12-19.jsonl
+2025-12-19_AI_enhanced_Chinese.jsonl
+2025-12-19_arxiv_only.jsonl
+2025-12-19_tldr.jsonl
+2025-12-19_wechat.jsonl
 {today}_wechat.jsonl
