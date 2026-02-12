@@ -1003,4 +1003,9 @@
 2026-02-11_arxiv_only.jsonl
 2026-02-11_tldr.jsonl
 2026-02-11_wechat.jsonl
+2026-02-12.jsonl
+2026-02-12_AI_enhanced_Chinese.jsonl
+2026-02-12_arxiv_only.jsonl
+2026-02-12_tldr.jsonl
+2026-02-12_wechat.jsonl
 {today}_wechat.jsonl
