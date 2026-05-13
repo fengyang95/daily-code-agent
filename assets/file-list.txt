@@ -1418,4 +1418,9 @@
 2026-05-12_arxiv_only.jsonl
 2026-05-12_tldr.jsonl
 2026-05-12_wechat.jsonl
+2026-05-13.jsonl
+2026-05-13_AI_enhanced_Chinese.jsonl
+2026-05-13_arxiv_only.jsonl
+2026-05-13_tldr.jsonl
+2026-05-13_wechat.jsonl
 {today}_wechat.jsonl
